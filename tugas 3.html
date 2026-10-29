@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nasi Goreng Jawa</title>
+    <style>
+        /* ---------- RESET & VARIABEL ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --merah: #b83a1e;
+            --merah-tua: #8f2a12;
+            --krem: #fbf6ee;
+            --kertas: #ffffff;
+            --teks: #2b2420;
+            --teks-lembut: #5b4f47;
+            --garis: #e7dccd;
+            --gelap: #2b1d17;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--krem);
+            color: var(--teks);
+            line-height: 1.65;
+            min-height: 100vh;
+            display: flex;              /* supaya footer menempel di bawah */
+            flex-direction: column;
+        }
+
+        a:focus-visible {
+            outline: 3px solid #ffd27a;
+            outline-offset: 3px;
+        }
+
+        /* ---------- HEADER / NAVBAR (FLEXBOX) ---------- */
+        header {
+            background: var(--merah);
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.25rem 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        nav a:hover {
+            border-bottom-color: #fff;
+        }
+
+        /* ---------- KONTEN UTAMA ---------- */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .intro {
+            background: var(--kertas);
+            border-left: 6px solid var(--merah);
+            border-radius: 6px;
+            padding: 1.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .intro h1 {
+            font-size: 2.2rem;
+            line-height: 1.2;
+            color: var(--merah-tua);
+            margin-bottom: 0.75rem;
+        }
+
+        .intro p {
+            max-width: 70ch;
+            color: var(--teks-lembut);
+        }
+
+        .judul-bagian {
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--garis);
+        }
+
+        /* ---------- CSS GRID + AUTO-FIT (5 KARTU) ---------- */
+        .grid-kartu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .kartu {
+            background: var(--kertas);
+            border: 1px solid var(--garis);
+            border-top: 4px solid var(--merah);
+            border-radius: 6px;
+            padding: 1.25rem;
+        }
+
+        .kartu h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .kartu ul,
+        .kartu ol {
+            padding-left: 1.25rem;
+            color: var(--teks-lembut);
+        }
+
+        .kartu li + li {
+            margin-top: 0.4rem;
+        }
+
+        /* ---------- FOOTER (FLEXBOX) ---------- */
+        footer {
+            background: var(--gelap);
+            color: #d9c9bd;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        footer ul {
+            list-style: none;
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        footer a {
+            color: #d9c9bd;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        /* Tablet dan Mobile (768px ke bawah) */
+        @media (max-width: 768px) {
+            header,
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .intro h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Mobile (480px ke bawah) */
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            main {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER + NAVBAR -->
+    <header>
+        <div class="logo">Kuliner Nusantara</div>
+        <nav aria-label="Navigasi utama">
+            <ul>
+                <li><a href="#tentang">Tentang</a></li>
+                <li><a href="#resep">Resep</a></li>
+                <li><a href="#penyajian">Penyajian</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- KONTEN UTAMA -->
+    <main>
+        <section class="intro" id="tentang">
+            <h1>Nasi Goreng Jawa</h1>
+            <p>Nasi goreng Jawa adalah makanan khas Indonesia berupa nasi yang digoreng dengan bumbu tradisional, seperti bawang merah, bawang putih, cabai, kemiri, dan kecap manis. Rasanya gurih, sedikit manis, dan bisa pedas sesuai selera.</p>
+        </section>
+
+        <section id="resep">
+            <h2 class="judul-bagian">Bahan dan cara membuat</h2>
+
+            <div class="grid-kartu">
+
+                <article class="kartu">
+                    <h3>Bahan utama</h3>
+                    <ul>
+                        <li>2 piring nasi putih</li>
+                        <li>2 butir telur</li>
+                        <li>100 gr ayam suwir</li>
+                    </ul>
+                </article>
+
+                <article class="kartu">
+                    <h3>Bumbu dan tambahan</h3>
+                    <ul>
+                        <li>2 sdm kecap manis</li>
+                        <li>Garam secukupnya</li>
+                        <li>Merica secukupnya</li>
+                        <li>Royco / penyedap rasa</li>
+                        <li>Irisan daun bawang</li>
+                        <li>Bawang merah, bawang putih, cabai, kemiri, dan terasi</li>
+                    </ul>
+                </article>
+
+                <article class="kartu">
+                    <h3>Menyiapkan bumbu</h3>
+                    <ol>
+                        <li>Haluskan bawang merah, bawang putih, cabai, kemiri, dan terasi menggunakan cobek atau blender.</li>
+                        <li>Panaskan minyak goreng di wajan.</li>
+                        <li>Tumis bumbu halus sampai harum dan matang.</li>
+                    </ol>
+                </article>
+
+                <article class="kartu">
+                    <h3>Memasak isian</h3>
+                    <ol>
+                        <li>Masukkan telur, lalu orak-arik hingga matang.</li>
+                        <li>Masukkan ayam suwir jika menggunakan, kemudian aduk rata.</li>
+                        <li>Masukkan nasi putih ke dalam wajan.</li>
+                    </ol>
+                </article>
+
+                <article class="kartu" id="penyajian">
+                    <h3>Penyelesaian dan penyajian</h3>
+                    <ol>
+                        <li>Tambahkan kecap manis, garam, merica, dan penyedap rasa secukupnya.</li>
+                        <li>Aduk semua bahan hingga bumbu tercampur rata.</li>
+                        <li>Masukkan irisan daun bawang, lalu goreng selama 2–3 menit sampai nasi panas merata.</li>
+                        <li>Koreksi rasa, kemudian angkat dan sajikan.</li>
+                    </ol>
+                </article>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 Resep Nasi Goreng Jawa</p>
+        <ul>
+            <li><a href="#tentang">Kembali ke atas</a></li>
+        </ul>
+    </footer>
+
+</body>
+</html>
