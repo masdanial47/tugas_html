@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pencari Profil GitHub</title>
+<style>
+  :root {
+    --bg: #e9eef5; --card: #ffffff; --ink: #16202e; --muted: #5b6778;
+    --accent: #2457d6; --danger: #b3261e; --line: #d5dce7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 48px 16px;
+    display: flex; justify-content: center; align-items: flex-start;
+    background: var(--bg); color: var(--ink); line-height: 1.5;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { width: 100%; max-width: 460px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { margin: 0 0 20px; color: var(--muted); }
+
+  /* ---------- Form ---------- */
+  form { display: flex; gap: 8px; }
+  input {
+    flex: 1; min-width: 0; padding: 12px 14px; font-size: 1rem;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: #fff; color: var(--ink);
+  }
+  button {
+    padding: 12px 18px; font-size: 1rem; font-weight: 600;
+    border: 0; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer;
+  }
+  button:disabled { opacity: .6; cursor: wait; }
+  input:focus-visible, button:focus-visible, a:focus-visible {
+    outline: 3px solid #9db6f5; outline-offset: 2px;
+  }
+
+  /* ---------- Area hasil ---------- */
+  #hasil { margin-top: 20px; }
+  .kotak {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 24px; text-align: center;
+  }
+  [hidden] { display: none !important; }
+
+  /* Loading */
+  .spinner {
+    width: 32px; height: 32px; margin: 0 auto 10px;
+    border: 4px solid var(--line); border-top-color: var(--accent);
+    border-radius: 50%; animation: putar .8s linear infinite;
+  }
+  @keyframes putar { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
+
+  /* Error */
+  #error { color: var(--danger); border-color: var(--danger); font-weight: 600; }
+
+  /* Profil */
+  #avatar { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--line); }
+  #nama { margin: 12px 0 0; font-size: 1.35rem; }
+  #login { margin: 0; color: var(--muted); }
+  #bio { margin: 12px 0; }
+  .repo { margin: 0 0 16px; font-size: 1.05rem; }
+  .repo strong { font-size: 1.4rem; }
+  .tautan {
+    display: inline-block; padding: 10px 16px; border-radius: 8px;
+    border: 1px solid var(--accent); color: var(--accent);
+    font-weight: 600; text-decoration: none;
+  }
+  .tautan:hover { background: var(--accent); color: #fff; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Pencari Profil GitHub</h1>
+  <p class="sub">Masukkan username GitHub untuk melihat profil publiknya.</p>
+
+  <form id="form-cari">
+    <input id="username" type="text" placeholder="contoh: torvalds"
+           aria-label="Username GitHub" autocomplete="off" required>
+    <button id="tombol" type="submit">Cari</button>
+  </form>
+
+  <!-- aria-live: pembaca layar ikut membacakan perubahan status -->
+  <section id="hasil" aria-live="polite">
+    <div id="loading" class="kotak" hidden>
+      <div class="spinner"></div>
+      <p>Memuat data…</p>
+    </div>
+
+    <div id="error" class="kotak" hidden></div>
+
+    <article id="profil" class="kotak" hidden>
+      <img id="avatar" alt="">
+      <h2 id="nama"></h2>
+      <p id="login"></p>
+      <p id="bio"></p>
+      <p class="repo"><strong id="repo"></strong> repositori publik</p>
+      <a id="tautan" class="tautan" target="_blank" rel="noopener noreferrer">Buka profil di GitHub</a>
+    </article>
+  </section>
+</main>
+
+<script>
+  // ---------- Ambil elemen DOM ----------
+  const form    = document.getElementById('form-cari');
+  const input   = document.getElementById('username');
+  const tombol  = document.getElementById('tombol');
+  const loading = document.getElementById('loading');
+  const error   = document.getElementById('error');
+  const profil  = document.getElementById('profil');
+
+  // Tampilkan SATU kondisi saja: 'loading' | 'error' | 'profil' | null (kosong)
+  function tampilkan(kondisi) {
+    loading.hidden = kondisi !== 'loading';
+    error.hidden   = kondisi !== 'error';
+    profil.hidden  = kondisi !== 'profil';
+  }
+
+  function tampilkanError(pesan) {
+    error.textContent = pesan;   // textContent = aman dari injeksi HTML
+    tampilkan('error');
+  }
+
+  // Isi kartu profil dari data JSON API GitHub
+  function tampilkanProfil(data) {
+    const avatar = document.getElementById('avatar');
+    avatar.src = data.avatar_url;
+    avatar.alt = 'Avatar ' + data.login;
+
+    document.getElementById('nama').textContent  = data.name || data.login; // name bisa null
+    document.getElementById('login').textContent = '@' + data.login;
+    document.getElementById('bio').textContent   = data.bio || 'Pengguna ini belum menulis bio.'; // bio bisa null
+    document.getElementById('repo').textContent  = data.public_repos;
+    document.getElementById('tautan').href       = data.html_url;
+
+    tampilkan('profil');
+  }
+
+  // ---------- Fungsi utama: memanggil API ----------
+  async function cariUser(username) {
+    tampilkan('loading');          // 1) kondisi LOADING
+    tombol.disabled = true;        //    cegah klik ganda saat request berjalan
+
+    try {
+      const res = await fetch('https://api.github.com/users/' + encodeURIComponent(username));
+
+      if (res.status === 404) {    // 3) kondisi USER TIDAK DITEMUKAN
+        tampilkanError('User tidak ditemukan. Periksa kembali username yang kamu masukkan.');
+        return;
+      }
+      if (!res.ok) {               // error lain, mis. 403 (batas request API tercapai)
+        throw new Error('Status HTTP ' + res.status);
+      }
+
+      const data = await res.json();
+      tampilkanProfil(data);       // 2) kondisi BERHASIL
+    } catch (err) {
+      // fetch gagal total (offline) atau status error selain 404
+      tampilkanError('Gagal mengambil data. Cek koneksi internet atau coba lagi beberapa saat.');
+    } finally {
+      tombol.disabled = false;     // dijalankan baik sukses maupun gagal
+    }
+  }
+
+  // ---------- Event submit form ----------
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();            // cegah halaman reload
+    const username = input.value.trim();
+    if (!username) return;
+    cariUser(username);
+  });
+</script>
+</body>
+</html>
